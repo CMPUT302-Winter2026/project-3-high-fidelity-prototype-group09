@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Vocabulary Explorer – nêhiyawêwin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ══════════════════ HOME ══════════════════ -->
+  <div id="screen-home" class="screen active">
+    <div class="header-green">
+      <div class="header-home-inner">
+        <h1>Vocabulary Explorer</h1>
+        <p class="sub">nêhiyawêwin · Plains Cree</p>
+        <div class="search-input-wrap">
+          <svg class="search-icon-abs" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input class="header-search-input" placeholder="Search in Cree or English…" id="home-search" oninput="homeSearch(this.value)" onfocus="goSearch()">
+        </div>
+        <button class="search-all-link" onclick="goAllWords()">Search across all vocabulary</button>
+      </div>
+    </div>
+    <div class="scroll-area">
+      <div class="section-hdr"><h3>Browse Categories</h3></div>
+      <div class="category-grid" id="cat-grid"></div>
+      <div class="section-hdr">
+        <h3>Recently Viewed</h3>
+        <button class="clear-btn" onclick="clearRecent()">Clear All</button>
+      </div>
+      <div id="recent-list" class="recent-list-wrap"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SEARCH ══════════════════ -->
+  <div id="screen-search" class="screen">
+    <div class="header-green">
+      <div class="nav-header">
+        <button class="back-btn" onclick="goBack()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+        <div>
+          <h2 id="search-title">All Words</h2>
+          <div class="hsub" id="search-subtitle">35 words</div>
+        </div>
+        <button class="icon-btn" onclick="toggleSort('search')" title="Toggle sort A–Z / Z–A">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="filter-bar">
+      <div class="filter-search-wrap">
+        <svg class="search-icon-abs" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="filter-search" id="search-filter-input" placeholder="Refine your search…" oninput="filterWordList(this.value)">
+      </div>
+      <div class="expert-row">
+        <span class="expert-label">
+          Expert Mode 
+          <span class="info-icon" onclick="showToast('Shows linguistic details like stems, paradigms, inflections')">ℹ️</span>
+        </span>
+        <button class="toggle-btn" id="search-expert-toggle" onclick="toggleExpert('search')"></button>
+      </div>
+    </div>
+    <div class="scroll-area">
+      <div class="word-list" id="search-word-list"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ NETWORK ══════════════════ -->
+  <div id="screen-network" class="screen">
+    <div class="header-green">
+      <div class="nav-header">
+        <button class="back-btn" onclick="goBack()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+        <h2>Word Network</h2>
+      </div>
+    </div>
+    <div class="scroll-area">
+      <div class="network-tip">Tap a connected word to re-center the network. The central word shows all relationships within the same category.</div>
+      <div class="central-card" id="central-card"></div>
+      <div class="connected-hdr" id="connected-hdr"></div>
+      <div id="connected-list"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ LESSONS ══════════════════ -->
+  <div id="screen-lessons" class="screen">
+    <div class="lessons-hdr">
+      <h2>My Lessons</h2>
+      <button class="btn-new-lesson" onclick="openNewLesson()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Lesson
+      </button>
+    </div>
+    <div class="lessons-search">
+      <div class="filter-search-wrap" style="margin-bottom:0">
+        <svg class="search-icon-abs" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="filter-search" placeholder="Search lessons…" oninput="filterLessons(this.value)">
+      </div>
+    </div>
+    <div class="scroll-area">
+      <div class="in-progress-lbl">In Progress</div>
+      <div id="lessons-list"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ WORD DETAIL ══════════════════ -->
+  <div id="screen-worddetail" class="screen">
+    <div class="header-green">
+      <div class="nav-header">
+        <button class="back-btn" onclick="goBack()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="word-detail-hdr-text">
+          <div class="wdh-word" id="wd-header-word"></div>
+          <div class="wdh-phonetic" id="wd-header-phonetic"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+
+          <!-- Speaker -->
+          <button class="icon-btn" id="wd-speaker-btn" title="Pronounce">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            </svg>
+          </button>
+        
+          <!-- Expert toggle -->
+          <span style="font-size:12px;opacity:0.78;font-weight:600;">Expert</span>
+          <button class="toggle-btn" id="wd-expert-toggle" onclick="toggleExpert('detail')"></button>
+        
+        </div>
+      </div>
+    </div>
+    <div class="scroll-area">
+      <div class="wd-body" id="wd-body"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ CATEGORY ══════════════════ -->
+  <div id="screen-category" class="screen">
+    <div class="header-green">
+      <div class="nav-header">
+        <button class="back-btn" onclick="goBack()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
+        <div>
+          <h2 id="cat-title">Kinship Terms</h2>
+          <div class="hsub" id="cat-subtitle">8 words</div>
+        </div>
+        <button class="icon-btn" onclick="toggleSort('cat')" title="Toggle sort A–Z / Z–A">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="filter-bar">
+      <div class="filter-search-wrap">
+        <svg class="search-icon-abs" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="filter-search" id="cat-filter-input" placeholder="Refine your search…" oninput="filterCatList(this.value)">
+      </div>
+      <div class="expert-row">
+        <span class="expert-label">Expert Mode</span>
+        <button class="toggle-btn" id="cat-expert-toggle" onclick="toggleExpert('cat')"></button>
+      </div>
+    </div>
+    <div class="scroll-area">
+      <div class="word-list" id="cat-word-list"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ BOTTOM NAV ══════════════════ -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" id="nav-home" onclick="switchTab('home')">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      Home
+    </button>
+    <button class="nav-btn" id="nav-search" onclick="switchTab('search')">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </div>
+      Search
+    </button>
+    <button class="nav-btn" id="nav-network" onclick="switchTab('network')">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </div>
+      Network
+    </button>
+    <button class="nav-btn" id="nav-lessons" onclick="switchTab('lessons')">
+      <div class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </div>
+      Lessons
+    </button>
+  </nav>
+
+  <!-- New Lesson Modal -->
+  <div class="modal-overlay" id="new-lesson-modal" onclick="closeModalOutside(event)">
+    <div class="modal-box">
+      <h3>New Lesson</h3>
+      <input class="modal-input" id="new-lesson-name" placeholder="Lesson name…" maxlength="60">
+      <input class="modal-input" id="new-lesson-desc" placeholder="Description (optional)…" maxlength="120">
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeNewLesson()">Cancel</button>
+        <button class="btn-create" onclick="createLesson()">Create Lesson</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>

@@ -1,2 +1,7 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/_iCgzE0B)
-# p3_template
+**Team Members: Bhoomi Bhoomi, Thi Nguyen, Parth Mittal, Tanvi Kohar,Chetan Tyagi, Harmanpreet Singh**
+
+**CCID: bbhoomi, thi2, pmittal1, tkohar, ctyagi, harmanp8**
+
+**Resource Acknowledgements: Figma Make as a tool for design and css reference.**
+
+**Usage Instructions: Open index.html.**
